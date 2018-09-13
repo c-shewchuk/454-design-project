@@ -1,0 +1,5 @@
+/**
+* This is where you create a new branch from. Always off of dev, never off of master. Anything that ends up in master, needs to go
+* through DEV first. We will use development for testing and what not. Everytime you want to make a change to something in DEV,
+* you need to branch off of DEV, make the changes, commit and push the code, then open a pull request to have it merged to DEV.
+*/
