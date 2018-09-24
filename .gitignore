@@ -1,4 +1,4 @@
 .idea
 .idea\codeStyles\Project.xml
 .idea\vcs.xml
-c-make-build-debug\*
+cmake-build-debug
