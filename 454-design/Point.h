@@ -11,6 +11,7 @@ public:
     int yValue;
 
     Point(int, int);
+    Point();
 };
 
 

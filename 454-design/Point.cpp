@@ -3,9 +3,16 @@
 //
 
 #include "Point.h"
+#include <iostream>
+
+using namespace std;
 
 Point::Point(int xVal, int yVal): xValue(xVal), yValue(yVal){
-    if((xVal || yVal) <= 0){
+    if((xVal || yVal) <= 0) {
         throw logic_error("Point values must be greater than zero");
     }
 }
+
+
+Point::Point(): xValue(0), yValue(0){}
+

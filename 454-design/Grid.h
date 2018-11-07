@@ -15,8 +15,8 @@ class Grid{
 
 public:
     vector<double> coeffcients;
-    static int virtualWidth;
-    static int virtualHeight;
+    int virtualWidth;
+    int virtualHeight;
     Point topCenter;
     Point topLeft;
     Point topRight;
@@ -27,12 +27,26 @@ public:
     Point centerRight;
     Point centerLeft;
 
+    /*
+     * Default constructor for a grid, requires the data of the curved surface and the virtualHeight and virtualWidth of the grid
+     */
+    Grid(vector< vector< double> >, double, double);
 
-    Grid(vector<double> inputData, double, double);
+    /*
+     * Initialize the virutalWidth and virtualHeight, and all the default pins of the
+     */
+    void initialize(double virtualWidth, double virtualHeight);
 
-    static void initialize(double virtualWidth, double virtualHeight);
-    static void setDefaultCalibration();
-    static vector<double> computeCoefficents(vector< vector<double> >, vector<double>);
+    /*
+     * Sets default calibration of the table
+     * TODO: NEEDS DATA TO THE CPP CALLS
+     */
+    void setDefaultCalibration();
+
+    /*
+     * Computes the quadratic coefficients required to map the curved surface as a flat one
+     */
+    vector<double> computeCoefficents(vector< vector<double> >, vector<double>);
 
 
 
