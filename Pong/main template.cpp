@@ -62,6 +62,8 @@ using namespace std
  int yfinal;
  int posOrNeg;
  int loop_time;
+ int start_time;
+ int decision_length;
  
  
  
@@ -89,6 +91,7 @@ using namespace std
 
 //////////VOID LOOP////////////
 int main(){
+    
     if(newPixyData){
         loop_time = millis()-loop_time;
         //GET X AND Y PIXY DATA
@@ -98,7 +101,7 @@ int main(){
         averageVelocity(x_new,y_new);
         predictY();
         
-        if (decision_Status == TRUE){
+        if (decision_Status() == TRUE){
             if((abs(yfinal) > abs(original_Prediction)+error) || abs(yfinal) < abs(original_Prediction)-error){
                 make_Decision();    //if decision off my certain amount, make new decision
             }
@@ -109,6 +112,9 @@ int main(){
     }
     
 }
+
+
+
     
 void averageVelocity(int x_new, int y_new, int loop_time){
     vxPuck -= vxMatrix[counter]; //Deletes oldest vx velocity in set
@@ -125,10 +131,7 @@ void averageVelocity(int x_new, int y_new, int loop_time){
         counter=0;          //ensures running average of _  number of data points
     }
 }
-    
-void setSpeed(float vx, float vy){
-    //set stepper motors such that speed of AI comes to (vx,vy);
-}
+
 
 void predictY(){
     gamma = abs(xAI-xPuck)/xPuck);
@@ -138,6 +141,16 @@ void predictY(){
     yfinal = abs((pow(-1,(bounces+1)%2))-posOrNeg)/2)*SCREEN_HEIGHT-posOrNeg*pow(-1,(bounces%2))*(abs(beta)-posOrNeg*yPuck+((posOrNeg-1)/2)*SCREEN_HEIGHT-(bounces-1)*SCREEN_HEIGHT);
 }
 
-void chooseMode(int xPuck, int yPuck, float vxPuck, float vyPuck, int xAI,
-                int yInt, int tInt){
+bool decision_Status(int decision_length){
+    if(millis()-start_time >= decision_length){
+        return 1;
+    }
+    else{
+        return 0;
+    }
+}
+
+void make_Decision(){
+    start_time = millis();
+    //insert logic here;
 }
