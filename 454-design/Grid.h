@@ -14,7 +14,12 @@ using namespace std;
 class Grid{
 
 public:
-    vector<double> coeffcients;
+    vector<float> topQuadraticCoeff;
+    vector<float> bottomQuadraticCoeff;
+    vector<float> centerHorizontalCoeff;
+    vector<float> leftQuadraticCoeff;
+    vector<float> rightQuadraticCoeff;
+    vector<float> centerVerticalCoeff;
     int virtualWidth;
     int virtualHeight;
     Point topCenter;
@@ -30,24 +35,28 @@ public:
     /*
      * Default constructor for a grid, requires the data of the curved surface and the virtualHeight and virtualWidth of the grid
      */
-    Grid(vector< vector< double> >, double, double);
+    Grid(float, float);
 
     /*
      * Initialize the virutalWidth and virtualHeight, and all the default pins of the
      */
-    void initialize(double virtualWidth, double virtualHeight);
+    void initialize(float virtualWidth, float virtualHeight);
 
     /*
      * Sets default calibration of the table
-     * TODO: NEEDS DATA TO THE CPP CALLS
+     * TODO: STILL NEEDS CALIBRATION
      */
     void setDefaultCalibration();
 
     /*
      * Computes the quadratic coefficients required to map the curved surface as a flat one
      */
-    vector<double> computeCoefficents(vector< vector<double> >, vector<double>);
+    vector<float> computeCoefficents(vector< vector<float> >, vector<float>);
 
+
+private:
+    vector< vector<float> > setPointVector(int, int, int);
+    vector<float> addPointsToVector(vector<float>, int, int, int);
 
 
 };
