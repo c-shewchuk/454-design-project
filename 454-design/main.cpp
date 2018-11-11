@@ -20,6 +20,11 @@ int main() {
         cout << grid.bottomQuadraticCoeff.at(i) << endl;
 
     }
+
+    Point test = grid.translatePoint(40,40);
+
+    cout << test.xValue << endl;
+    cout << test.yValue << endl;
     return 0;
 
 }

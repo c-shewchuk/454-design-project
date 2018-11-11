@@ -53,6 +53,11 @@ public:
      */
     vector<float> computeCoefficents(vector< vector<float> >, vector<float>);
 
+    /*
+     * Takes in point given by the Pixy and maps its coordinates to the virtual, flat grid
+     */
+
+    Point translatePoint(int,int);
 
 private:
     vector< vector<float> > setPointVector(int, int, int);

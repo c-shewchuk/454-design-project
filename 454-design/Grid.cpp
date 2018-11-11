@@ -130,5 +130,43 @@ vector<float> Grid::addPointsToVector(vector<float> input, int left, int center,
     return input;
 }
 
+/*
+ * Translates the pixy point, y values are vertical, x are horizontal
+ *
+ * THIS MAY POSSIBLY NEED A COORDINATE FLIP BUT THATS OKAY
+ */
+Point Grid::translatePoint(int xvalue, int yvalue) {
+    Point pixyPoint = Point(xvalue,yvalue);
+    float centerY = centerHorizontalCoeff[0]*xvalue*xvalue + centerHorizontalCoeff[1] * xvalue + centerHorizontalCoeff[2];
+    float centerX = centerVerticalCoeff[0]*yvalue*yvalue + centerHorizontalCoeff[1] * yvalue + centerVerticalCoeff[2];
+
+    if (yvalue < centerY){
+        float topY = topQuadraticCoeff[0]* xvalue*xvalue +topQuadraticCoeff[1]*xvalue + topQuadraticCoeff[2];
+        float ratioY = (yvalue-topY) / (centerY - topY);
+        pixyPoint.yValue = (virtualHeight * ratioY )/ 2;
+    }
+    else{
+        float botY = bottomQuadraticCoeff[0] * xvalue * xvalue + bottomQuadraticCoeff[1] * xvalue + bottomQuadraticCoeff[2];
+        float ratioY = (botY - yvalue) / (botY - centerY);
+        pixyPoint.yValue = virtualHeight - (virtualHeight * ratioY )/ 2;
+    }
+
+    if(xvalue < centerX){
+        float leftX = leftQuadraticCoeff[0] * yvalue * yvalue + leftQuadraticCoeff[1] * yvalue + leftQuadraticCoeff[2];
+        float ratioX = (xvalue - leftX) /(centerX - leftX);
+        pixyPoint.xValue = (virtualWidth *ratioX) / 2;
+    }
+    else{
+        float rightX = rightQuadraticCoeff[0] * yvalue * yvalue + leftQuadraticCoeff[1] * yvalue + leftQuadraticCoeff[2];
+        float ratioX = (rightX - xvalue) / (rightX - centerX);
+        pixyPoint.xValue = virtualWidth - (virtualWidth *ratioX) / 2;
+    }
+
+    return pixyPoint;
+
+}
+
+
+
 
 
