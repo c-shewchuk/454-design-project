@@ -100,7 +100,7 @@ int main(){
         
         averageVelocity(x_new,y_new);
         predictY();
-        
+        //use absolute value for
         if (decision_Status() == TRUE){
             if((abs(yfinal) > abs(original_Prediction)+error) || abs(yfinal) < abs(original_Prediction)-error){
                 make_Decision();    //if decision off my certain amount, make new decision
@@ -137,7 +137,13 @@ void predictY(){
     gamma = abs(xAI-xPuck)/xPuck);
     posOrNeg = abs(vyPuck)/(-vyPuck); //if posOrNeg is pos then vy is up if posOrNeg is neg then vy is down
     beta = (gamma*vyPuck); //the -posOrNeg*striker_rad/2 is an arbitrary correction factor
-    bounces = (int) ((abs(beta)+posOrNeg*yPuck)/SCREEN_HEIGHT+(1-posOrNeg)/2);
+    if(puck.y+beta<0){
+        bounces = (int) (abs(beta)-puck.y)/SCREEN_HEIGHT+1;
+    }else if(puck.y+beta>SCREEN_HEIGHT){
+        bounces = (int) (abs(beta)-(SCREEN_HEIGHT-puck.y))/SCREEN_HEIGHT+1;
+    }else{
+        bounces = 0;
+    }
     yfinal = abs((pow(-1,(bounces+1)%2))-posOrNeg)/2)*SCREEN_HEIGHT-posOrNeg*pow(-1,(bounces%2))*(abs(beta)-posOrNeg*yPuck+((posOrNeg-1)/2)*SCREEN_HEIGHT-(bounces-1)*SCREEN_HEIGHT);
 }
 
