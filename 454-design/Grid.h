@@ -35,12 +35,12 @@ public:
     /*
      * Default constructor for a grid, requires the data of the curved surface and the virtualHeight and virtualWidth of the grid
      */
-    Grid(float, float);
+    Grid(int, int);
 
     /*
      * Initialize the virutalWidth and virtualHeight, and all the default pins of the
      */
-    void initialize(float virtualWidth, float virtualHeight);
+    void initialize(int virtualWidth, int virtualHeight);
 
     /*
      * Sets default calibration of the table
@@ -61,7 +61,7 @@ public:
 
 private:
     vector< vector<float> > setPointVector(int, int, int);
-    vector<float> addPointsToVector(vector<float>, int, int, int);
+    vector<float> addPointsToVector(int, int, int);
 
 
 };

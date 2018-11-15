@@ -10,13 +10,22 @@ using namespace std;
 
 
 
-Grid::Grid(float virtualHeight, float virtualWidth){
+Grid::Grid(int virtualHeight, int virtualWidth){
+    this->bottomCenter = Point(161,81);
+    this->bottomLeft = Point(24,164);
+    this->bottomRight = Point(164,184);
+    this->center = Point(164,105);
+    this->topCenter = Point(169,29);
+    this->centerLeft = Point(20,104);
+    this->centerRight = Point(312,102);
+    this->topLeft = Point(21,40);
+    this->topRight = Point(308,37);
     this->initialize(virtualWidth, virtualHeight);
 }
 
-void Grid::initialize(float virtualWidth, float virtualHeight) {
-    Grid::virtualHeight = virtualHeight;
-    Grid::virtualWidth = virtualWidth;
+void Grid::initialize(int virtualWidth, int virtualHeight) {
+    this->virtualHeight = virtualHeight;
+    this->virtualWidth = virtualWidth;
 
     setDefaultCalibration();
 }
@@ -26,29 +35,17 @@ void Grid::initialize(float virtualWidth, float virtualHeight) {
  * I will input the default values they used to see what happens when we use our camera
  */
 void Grid::setDefaultCalibration(){
-    /*
-     * Default Points
-     */
-    this->bottomCenter = Point(155,190);
-    this->bottomLeft = Point(12,170);
-    this->bottomRight = Point(293,82);
-    this->center = Point(156,100);
-    this->topCenter = Point(160,12);
-    this->centerLeft = Point(9,96);
-    this->centerRight = Point(303,107);
-    this->topLeft = Point(17,20);
-    this->topRight = Point(299,30);
 
     /*
      * Initialize the coefficients
      */
 
-    this->bottomQuadraticCoeff = addPointsToVector(this->bottomQuadraticCoeff, this->bottomLeft.yValue, this->bottomCenter.yValue, this->bottomRight.yValue);
-    this->topQuadraticCoeff = addPointsToVector(this->topQuadraticCoeff, this->topLeft.yValue, this->topCenter.yValue, this->topRight.yValue);
-    this->centerHorizontalCoeff = addPointsToVector(this->centerHorizontalCoeff, this->centerLeft.yValue, this->center.yValue, this->centerRight.yValue);
-    this->leftQuadraticCoeff = addPointsToVector(this->leftQuadraticCoeff, this->topLeft.xValue, this->centerLeft.xValue, this->bottomLeft.xValue);
-    this->rightQuadraticCoeff = addPointsToVector(this->rightQuadraticCoeff, this->topRight.xValue, this->centerRight.xValue, this->bottomRight.xValue);
-    this->centerVerticalCoeff = addPointsToVector(this->centerVerticalCoeff, this->topCenter.xValue, this->center.xValue, this->bottomCenter.xValue);
+    vector<float> bottomQDCoeff = addPointsToVector(this->bottomLeft.yValue, this->bottomCenter.yValue, this->bottomRight.yValue);
+    vector<float> topQDCoeff = addPointsToVector(this->topLeft.yValue, this->topCenter.yValue, this->topRight.yValue);
+    vector<float> centerQDHorizontalCoeff = addPointsToVector(this->centerLeft.yValue, this->center.yValue, this->centerRight.yValue);
+    vector<float> leftQDCoeff = addPointsToVector(this->topLeft.xValue, this->centerLeft.xValue, this->bottomLeft.xValue);
+    vector<float>rightQDCoeff = addPointsToVector(this->topRight.xValue, this->centerRight.xValue, this->bottomRight.xValue);
+    vector<float> centerQDVerticalCoeff = addPointsToVector(this->topCenter.xValue, this->center.xValue, this->bottomCenter.xValue);
 
 
     /*
@@ -66,17 +63,21 @@ void Grid::setDefaultCalibration(){
      * Calculate the coefficients for our grid
      */
 
-    this->bottomQuadraticCoeff = computeCoefficents(bottomQuad2D,this->bottomQuadraticCoeff);
-    this->topQuadraticCoeff = computeCoefficents(topQuad2D, this->topQuadraticCoeff);
-    this->centerHorizontalCoeff = computeCoefficents(centerHorizontalQuad2D, this->centerHorizontalCoeff);
-    this->leftQuadraticCoeff = computeCoefficents(leftQuad2D, this->leftQuadraticCoeff);
-    this->rightQuadraticCoeff = computeCoefficents(rightQuad2D, this->rightQuadraticCoeff);
-    this->centerVerticalCoeff = computeCoefficents(centerVerticalQuad2D, this->centerVerticalCoeff);
+    this->bottomQuadraticCoeff = computeCoefficents(bottomQuad2D,bottomQDCoeff);
+    this->topQuadraticCoeff = computeCoefficents(topQuad2D, topQDCoeff);
+    this->centerHorizontalCoeff = computeCoefficents(centerHorizontalQuad2D, centerQDHorizontalCoeff);
+    this->leftQuadraticCoeff = computeCoefficents(leftQuad2D, leftQDCoeff);
+    this->rightQuadraticCoeff = computeCoefficents(rightQuad2D, rightQDCoeff);
+    this->centerVerticalCoeff = computeCoefficents(centerVerticalQuad2D, centerQDVerticalCoeff);
 
 }
 vector<float> Grid::computeCoefficents(vector< vector<float> > data, vector<float> coefficients){
-    int i, j, k, k1, N;
-    N = coefficients.size();
+    int i = 0;
+    int j = 0;
+    int k = 0;
+    int k1 = 0;
+    int N = 0;
+    N = static_cast<int>(coefficients.size());
 
     for(k = 0; k < N; k++){
         k1 = k + 1;
@@ -98,8 +99,8 @@ vector<float> Grid::computeCoefficents(vector< vector<float> > data, vector<floa
         }
     }
     for(i = N-2; i >= 0; i--){
-        for(j = N-1; j >= 0; j--){
-            coefficients[i] -= data[i][j] * coefficients[j];
+        for(j = N-1; j >= (i+1); j--){
+            coefficients[i] -= (data[i][j] * coefficients[j]);
         }
     }
 
@@ -109,12 +110,12 @@ vector<float> Grid::computeCoefficents(vector< vector<float> > data, vector<floa
 
 vector< vector<float> > Grid::setPointVector(int left, int center, int right){
     vector< vector<float> > points(3, vector<float>(2));
-    points.at(0).at(0) = left*left; // square the top left value
-    points.at(0).at(1) = left;
-    points.at(1).at(0) = center*center;
-    points.at(1).at(1) = center;
-    points.at(2).at(0) = right*right;
-    points.at(2).at(1) = right;
+    points[0][0] = left*left;
+    points[0][1] = left;
+    points[1][0] = center*center;
+    points[1][1] = center;
+    points[2][0] = right*right;
+    points[2][1] = right;
 
     return points;
 }
@@ -122,12 +123,12 @@ vector< vector<float> > Grid::setPointVector(int left, int center, int right){
 /*
  * Quickly add the values need to the point vectors used to calculate the coefficients. Function because it happens A LOT.
  */
-vector<float> Grid::addPointsToVector(vector<float> input, int left, int center, int right) {
-    input.resize(3);
-    input[0] = left;
-    input[1] = center;
-    input[2] = right;
-    return input;
+vector<float> Grid::addPointsToVector(int left, int center, int right) {
+    vector<float> output(3);
+    output[0] = left;
+    output[1] = center;
+    output[2] = right;
+    return output;
 }
 
 /*
@@ -137,29 +138,29 @@ vector<float> Grid::addPointsToVector(vector<float> input, int left, int center,
  */
 Point Grid::translatePoint(int xvalue, int yvalue) {
     Point pixyPoint = Point(xvalue,yvalue);
-    float centerY = centerHorizontalCoeff[0]*xvalue*xvalue + centerHorizontalCoeff[1] * xvalue + centerHorizontalCoeff[2];
-    float centerX = centerVerticalCoeff[0]*yvalue*yvalue + centerHorizontalCoeff[1] * yvalue + centerVerticalCoeff[2];
+    float centerY = (centerHorizontalCoeff[0]*xvalue*xvalue) + (centerHorizontalCoeff[1] * xvalue) + centerHorizontalCoeff[2];
+    float centerX = (centerVerticalCoeff[0]*yvalue*yvalue) + (centerVerticalCoeff[1] * yvalue) + centerVerticalCoeff[2];
 
     if (yvalue < centerY){
         float topY = topQuadraticCoeff[0]* xvalue*xvalue +topQuadraticCoeff[1]*xvalue + topQuadraticCoeff[2];
         float ratioY = (yvalue-topY) / (centerY - topY);
-        pixyPoint.yValue = (virtualHeight * ratioY )/ 2;
+        pixyPoint.yValue = static_cast<int>(virtualHeight / 2 * ratioY);
     }
     else{
-        float botY = bottomQuadraticCoeff[0] * xvalue * xvalue + bottomQuadraticCoeff[1] * xvalue + bottomQuadraticCoeff[2];
+        float botY = (bottomQuadraticCoeff[0] * xvalue * xvalue) + (bottomQuadraticCoeff[1] * xvalue) + bottomQuadraticCoeff[2];
         float ratioY = (botY - yvalue) / (botY - centerY);
-        pixyPoint.yValue = virtualHeight - (virtualHeight * ratioY )/ 2;
+        pixyPoint.yValue = static_cast<int>(virtualHeight - (virtualHeight / 2 * ratioY));
     }
 
     if(xvalue < centerX){
-        float leftX = leftQuadraticCoeff[0] * yvalue * yvalue + leftQuadraticCoeff[1] * yvalue + leftQuadraticCoeff[2];
+        float leftX = (leftQuadraticCoeff[0] * yvalue * yvalue) + (leftQuadraticCoeff[1] * yvalue) + leftQuadraticCoeff[2];
         float ratioX = (xvalue - leftX) /(centerX - leftX);
-        pixyPoint.xValue = (virtualWidth *ratioX) / 2;
+        pixyPoint.xValue = static_cast<int>(virtualWidth / 2 * ratioX);
     }
     else{
-        float rightX = rightQuadraticCoeff[0] * yvalue * yvalue + leftQuadraticCoeff[1] * yvalue + leftQuadraticCoeff[2];
+        float rightX = (rightQuadraticCoeff[0] * yvalue * yvalue) + (leftQuadraticCoeff[1] * yvalue) + leftQuadraticCoeff[2];
         float ratioX = (rightX - xvalue) / (rightX - centerX);
-        pixyPoint.xValue = virtualWidth - (virtualWidth *ratioX) / 2;
+        pixyPoint.xValue = static_cast<int>(virtualWidth - (virtualWidth / 2 * ratioX));
     }
 
     return pixyPoint;
