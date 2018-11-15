@@ -24,8 +24,8 @@ Grid::Grid(int virtualHeight, int virtualWidth){
 }
 
 void Grid::initialize(int virtualWidth, int virtualHeight) {
-    Grid::virtualHeight = virtualHeight;
-    Grid::virtualWidth = virtualWidth;
+    this->virtualHeight = virtualHeight;
+    this->virtualWidth = virtualWidth;
 
     setDefaultCalibration();
 }
@@ -40,12 +40,12 @@ void Grid::setDefaultCalibration(){
      * Initialize the coefficients
      */
 
-    this->bottomQuadraticCoeff = addPointsToVector(this->bottomLeft.yValue, this->bottomCenter.yValue, this->bottomRight.yValue);
-    this->topQuadraticCoeff = addPointsToVector(this->topLeft.yValue, this->topCenter.yValue, this->topRight.yValue);
-    this->centerHorizontalCoeff = addPointsToVector(this->centerLeft.yValue, this->center.yValue, this->centerRight.yValue);
-    this->leftQuadraticCoeff = addPointsToVector(this->topLeft.xValue, this->centerLeft.xValue, this->bottomLeft.xValue);
-    this->rightQuadraticCoeff = addPointsToVector(this->topRight.xValue, this->centerRight.xValue, this->bottomRight.xValue);
-    this->centerVerticalCoeff = addPointsToVector(this->topCenter.xValue, this->center.xValue, this->bottomCenter.xValue);
+    vector<float> bottomQDCoeff = addPointsToVector(this->bottomLeft.yValue, this->bottomCenter.yValue, this->bottomRight.yValue);
+    vector<float> topQDCoeff = addPointsToVector(this->topLeft.yValue, this->topCenter.yValue, this->topRight.yValue);
+    vector<float> centerQDHorizontalCoeff = addPointsToVector(this->centerLeft.yValue, this->center.yValue, this->centerRight.yValue);
+    vector<float> leftQDCoeff = addPointsToVector(this->topLeft.xValue, this->centerLeft.xValue, this->bottomLeft.xValue);
+    vector<float>rightQDCoeff = addPointsToVector(this->topRight.xValue, this->centerRight.xValue, this->bottomRight.xValue);
+    vector<float> centerQDVerticalCoeff = addPointsToVector(this->topCenter.xValue, this->center.xValue, this->bottomCenter.xValue);
 
 
     /*
@@ -63,12 +63,12 @@ void Grid::setDefaultCalibration(){
      * Calculate the coefficients for our grid
      */
 
-    this->bottomQuadraticCoeff = computeCoefficents(bottomQuad2D,this->bottomQuadraticCoeff);
-    this->topQuadraticCoeff = computeCoefficents(topQuad2D, this->topQuadraticCoeff);
-    this->centerHorizontalCoeff = computeCoefficents(centerHorizontalQuad2D, this->centerHorizontalCoeff);
-    this->leftQuadraticCoeff = computeCoefficents(leftQuad2D, this->leftQuadraticCoeff);
-    this->rightQuadraticCoeff = computeCoefficents(rightQuad2D, this->rightQuadraticCoeff);
-    this->centerVerticalCoeff = computeCoefficents(centerVerticalQuad2D, this->centerVerticalCoeff);
+    this->bottomQuadraticCoeff = computeCoefficents(bottomQuad2D,bottomQDCoeff);
+    this->topQuadraticCoeff = computeCoefficents(topQuad2D, topQDCoeff);
+    this->centerHorizontalCoeff = computeCoefficents(centerHorizontalQuad2D, centerQDHorizontalCoeff);
+    this->leftQuadraticCoeff = computeCoefficents(leftQuad2D, leftQDCoeff);
+    this->rightQuadraticCoeff = computeCoefficents(rightQuad2D, rightQDCoeff);
+    this->centerVerticalCoeff = computeCoefficents(centerVerticalQuad2D, centerQDVerticalCoeff);
 
 }
 vector<float> Grid::computeCoefficents(vector< vector<float> > data, vector<float> coefficients){
